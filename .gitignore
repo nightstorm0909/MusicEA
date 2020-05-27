@@ -1,2 +1,6 @@
 *.png
 __pycache__
+*.swp
+old/
+.gitignore
+test.py
