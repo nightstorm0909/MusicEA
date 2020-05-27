@@ -3,67 +3,73 @@
 """
 Created on Mon May 18 17:37:38 2020
 """
-import sys
-import os
+import sys, os
 path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(path)
 
-import numpy as np
 import pickle
 import argparse
+import numpy as np
 from random import Random
 
 import utilities.midi_utils as midi
 from Individual import Individual
 
 def init_flags_parser():
-	parser = argparse.ArgumentParser()
-	parser.add_argument('-m', '--inputMidi', type=str, default=None, help='input midi file')
-	parser.add_argument('-b', '--bestModel', type=str, default=None, help='best model parameters')
-	parser.add_argument('-s', '--saveName', type=str, default=None, help='generated midi file name')
-	parser.add_argument('-q', '--quiet', action = "store_true", default = False, help='quiet mode')
-	return parser
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--inputMidi', type=str, default=None, help='input midi file')
+    parser.add_argument('-b', '--bestModel', type=str, default=None, help='best model parameters')
+    parser.add_argument('-s', '--saveName', type=str, default=None, help='generated midi file name')
+    parser.add_argument('-q', '--quiet', action = "store_true", default = False, help='quiet mode')
+    return parser
 
+
+def get_input(args):
+    parser = init_flags_parser()
+
+    if isinstance(args, list):
+        # Parse args passed to the main function
+        args = parser.parse_args(args)
+    else:
+        # Parse args from terminal
+        args = parser.parse_args()
+
+    if not args.inputMidi:
+        raise Exception("Input midi file not spesified! Use -m <filename>")
+    if not args.bestModel:
+        raise Exception("Input model file not spesified! Use -b <filename>")
+    if not args.saveName:
+        raise Exception("Input name of outfile not spesified! Use -s <filename>")
+
+    return args
 
 def main(args=None):
-	parser = init_flags_parser()
+    arguments = get_input(args)
 
-	if isinstance(args, list):
-		# Parse args passed to the main function
-		args = parser.parse_args(args)
-	else:
-		# Parse args from terminal
-		args = parser.parse_args()
+     # get filenames
+    model_filename = arguments.bestModel
+    midi_filename = arguments.inputMidi
+    new_filename = arguments.saveName
 
-	if not args.inputMidi:
-		raise Exception("Input midi file not spesified! Use -m <filename>")
-	if not args.bestModel:
-		raise Exception("Input model file not spesified! Use -b <filename>")
-	if not args.saveName:
-		raise Exception("Input name of outfile not spesified! Use -s <filename>")
+    # open old midi file
+    csv_file = midi.midi_to_csv(midi_filename)
+    notes = midi.csv_to_notes(csv_file)
+    observed_sequence = notes.astype('int')
 
+    with open(model_filename, 'rb') as f:
+        stats = pickle.load(f)
 
-	csv_file = midi.midi_to_csv(args.inputMidi)
-	notes = midi.csv_to_notes(csv_file)
+    # plot statistics
+    # stats.plot()
 
-	with open(args.bestModel, 'rb') as f:
-		stats = pickle.load(f)
-	stats.plot()
-	bestState = stats.bestState[-1]
+    best_individual = stats.bestIndividual
 
-	Individual.nHiddenStates = bestState[0].shape[0]
-	Individual.nObservableStates = bestState[2].shape[1]
-	uniprng = Random()
-	Individual.uniprng = uniprng
-	Individual.normprng = uniprng
-	Individual.observed_sequence = notes
-	bestInd = Individual()
+    genNotes, _ = best_individual.model.generate(len(notes))
 
-	genNotes, _ = bestInd.model.generate(len(notes))
-	genNotes = np.array(genNotes)
-	with open("{}.npy".format(args.saveName), 'wb')  as f:
-		np.save(f, genNotes)
-	midi.notes_to_midi(args.inputMidi, genNotes, args.saveName)
+    midi.notes_to_midi(midi_filename, genNotes, 'output/'+new_filename)
 
 if __name__ == '__main__':
-	main()
+    main()
+    # main(['-m', 'data/Never-Gonna-Give-You-Up-1.mid',
+    #       '-b','output/stat_gen10_hid32_state7469.pickle',
+    #       '-s', 'new_song_2'])
