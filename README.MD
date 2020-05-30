@@ -18,3 +18,9 @@ Config file
 * useFullSequence - if true will use nObservableStates, else will use unique values in observed sequence
 
 [Mark Stamp. HMM](https://www.cs.sjsu.edu/~stamp/RUA/HMM.pdf)
+
+# Music generation using Autoregressive Linear Model(ALM)
+For population training, run:
+```sh
+python main.py -c config.cfg -m train.mp3
+```

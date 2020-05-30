@@ -1,12 +1,12 @@
 import random
 import numpy as np
 
-class AutoRegressiveLP:
+class AutoRegressiveLM:
 	N = 3
 	def __init__(self, w: np.ndarray = None):
 		if w is None:
-			#self.w = [random.random() for _ in range(AutoRegressiveLP.N)]
-			self.w = np.random.uniform(-1, 1, AutoRegressiveLP.N)
+			#self.w = [random.random() for _ in range(AutoRegressiveLM.N)]
+			self.w = np.random.uniform(-1, 1, AutoRegressiveLM.N)
 		else:
 			self.w = w
 
@@ -54,3 +54,16 @@ class AutoRegressiveLP:
 
 	def __str__(self):
 		return np.array2string(self.w)
+
+	def get_w(self):
+		'''
+		Get the parameters of the model
+		'''
+		return self.w
+
+	def set_w(self, value: np.array):
+		'''
+		Set the parameters of the model
+		'''
+		assert value.shape == self.w.shape
+		self.w = value

@@ -5,7 +5,7 @@ import librosa
 import librosa.display
 import argparse
 import matplotlib.pyplot as plt
-from ALP import AutoRegressiveLP as alp
+from ALM import AutoRegressiveLM as alm
 from pandas.plotting import autocorrelation_plot
 from utilities.music_utils import music_signal, music_save
 
@@ -35,9 +35,14 @@ plt.subplot(3, 1, 3)
 plt.show()
 '''
 
-#model  = alp(np.array([1,1,2]))
-model  = alp()
-gen = model.generate(len(y[:512]))
+#model  = alm(np.array([1,1,2]))
+model  = alm()
+#gen = model.generate(len(y[:512]))
+print(y.shape, sr)
 s = time.time()
-print("fitness:{}, in {} mins".format(model.fitness(y[:500000]), (time.time() - s) / 60))
-music_save("test", y[:500000], sr)
+y_hat = librosa.core.resample(y, sr, 2500)
+print(y_hat.shape)
+print("fitness:{}, in {} mins".format(model.fitness(y_hat), (time.time() - s) / 60))
+#music_save("train", y_hat[:], 2500)
+#y_hat2 = librosa.core.resample(y_hat, 1000, sr)
+#music_save("test2", y_hat2, sr)

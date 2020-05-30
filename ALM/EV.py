@@ -5,34 +5,33 @@ Created on Mon May 18 17:37:38 2020
 """
 import time
 import pickle
+import librosa
 import numpy as np
-import utilities.midi_utils as midi
+import matplotlib.pyplot as plt
 from Population import Population
 from Individual import Individual
 from multiprocessing import Pool
+from ALM import AutoRegressiveLM as alm
 from utilities.utils import EV_Stats, save_model
+from utilities.music_utils import music_signal, music_save
 
 class EV:
-	def __init__(self, config, midi_filename):
+	def __init__(self, config, music_filename):
 		# get sequence
-		csv_file = midi.midi_to_csv(midi_filename)
-		notes = midi.csv_to_notes(csv_file)
-		observed_sequence = notes.astype('int') #list(notes)
-
-		# states used in the individuals
-		if not config.useFullSequence:
-			self.observed_states = list(np.unique(observed_sequence))
-		else:
-			self.observed_states = np.arange(config.nObservableStates)
+		y, sr = music_signal(music_filename)
+		self.sr = config.samplingRate
+		self.observed_sequence = librosa.core.resample(y, sr, self.sr)
+		self.observed_sequence =self.observed_sequence[:int(len(self.observed_sequence)/3)] 
+		print("[INFO] resampled sequence length: ", self.observed_sequence.shape)
 
 		# setup random number generator
 		np.random.seed(config.randomSeed)
 
 		# Individual initialization
-		Individual.observed_sequence = observed_sequence
-		Individual.nHiddenStates = config.nHiddenStates
+		Individual.observed_sequence = self.observed_sequence
 		Individual.learningRate = config.learningRate
-		Individual.observed_states = self.observed_states
+		Individual.minLimit=config.minLimit
+		Individual.maxLimit=config.maxLimit
 
 		# Population initialization
 		Population.crossoverFraction = config.crossoverFraction
@@ -40,7 +39,6 @@ class EV:
 
 		# save sequence and config
 		self.config = config
-		self.observed_sequence = observed_sequence
 
 	def run(self):
 		# create initial Population (random initialization)
@@ -86,9 +84,13 @@ class EV:
 		stats.plot()
 
 		# save statistics
-		f_name = "stat_gen{}_hid{}_state{}.pickle".format(
-			self.config.generationCount,
-			self.config.nHiddenStates,
-			len(self.observed_states))
+		f_name = "stat_gen{}_pop{}.pickle".format(self.config.generationCount, self.config.populationSize)
 
 		save_model(stats, 'output/'+f_name)
+		model = alm()
+		model.set_w(stats.bestIndividual[-1].x)
+		y_hat = model.generate(len(self.observed_sequence))
+		self.gen = y_hat
+		#plt.hist(y_hat, 100)
+		#plt.show()
+		#music_save("gen{}_pop{}".format(self.config.generationCount, self.config.populationSize), y_hat, self.sr)
