@@ -1,7 +1,0 @@
-*.png
-__pycache__
-*.swp
-old/
-.gitignore
-*.pickle
-*.wav
