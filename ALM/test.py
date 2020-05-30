@@ -23,6 +23,8 @@ print(args)
 
 plt.figure()
 y, sr = music_signal(args.input)
+with open('train.npy', 'wb') as f:
+	np.save(f, np.array([y, sr]))
 '''auto_cor = librosa.autocorrelate(y)
 plt.subplot(3, 1, 1)
 librosa.display.waveplot(y, sr=sr)
@@ -33,7 +35,7 @@ plt.xlabel('Lag (frames)')
 plt.subplot(3, 1, 3)
 #autocorrelation_plot(pd.DataFrame(y)[:1024])
 plt.show()
-'''
+
 
 #model  = alm(np.array([1,1,2]))
 model  = alm()
@@ -46,3 +48,4 @@ print("fitness:{}, in {} mins".format(model.fitness(y_hat), (time.time() - s) / 
 #music_save("train", y_hat[:], 2500)
 #y_hat2 = librosa.core.resample(y_hat, 1000, sr)
 #music_save("test2", y_hat2, sr)
+'''
