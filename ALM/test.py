@@ -23,9 +23,12 @@ print(args)
 
 plt.figure()
 y, sr = music_signal(args.input)
-with open('train.npy', 'wb') as f:
-	np.save(f, np.array([y, sr]))
-'''auto_cor = librosa.autocorrelate(y)
+plt.figure()
+plt.plot(y)
+plt.show()
+'''with open('train.npy', 'wb') as f:
+np.save(f, np.array([y, sr]))
+auto_cor = librosa.autocorrelate(y)
 plt.subplot(3, 1, 1)
 librosa.display.waveplot(y, sr=sr)
 plt.subplot(3, 1, 2)

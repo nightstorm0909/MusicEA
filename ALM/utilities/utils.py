@@ -41,6 +41,7 @@ class EV_Stats:
 		self.meanFit=[]
 		self.stddevFit=[]
 		self.mutationStrength = []
+		self.finished_time = 0.0
 
 	def accumulate(self, pop):
 		#find state with max fitness

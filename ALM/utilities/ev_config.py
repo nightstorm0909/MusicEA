@@ -27,6 +27,7 @@ class EV_Config:
 			 'samplingRate': (int,True),
 			 'n': (int,True),
 			 'random': (bool,True),
+			 'multiSigma': (bool,True),
 			 'reduceLength': (int,True)
 			 }
 

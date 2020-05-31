@@ -29,11 +29,12 @@ class EV:
 
 		# Individual initialization
 		Individual.observed_sequence = self.observed_sequence
-		Individual.learningRate = config.learningRate
+		#Individual.learningRate = config.learningRate
 		Individual.minLimit=config.minLimit
 		Individual.maxLimit=config.maxLimit
 		Individual.N = config.n
 		Individual.rand = config.random
+		Individual.multi_dim_mut_rate = config.multiSigma
 
 		# Population initialization
 		Population.crossoverFraction = config.crossoverFraction
@@ -43,6 +44,7 @@ class EV:
 		self.config = config
 
 	def run(self):
+		start = time.time()
 		# create initial Population (random initialization)
 		population = Population(self.config.populationSize)
 		population.evaluateFitness()
@@ -82,16 +84,17 @@ class EV:
 			print("[INFO] Generation {} finished in {:6.3f} minutes\n".format(
 				i+1, (time.time() - gen_start)/60))
 
+		stats.finished_time = (time.time() - start) / 3600
 		# plot accumulated stats to file/screen using matplotlib
 		stats.plot()
-		model = stats.bestIndividual[-1]
+		ind = stats.bestIndividual[-1]
 
 		# save statistics
-		f_name = "stat_gen{}_pop{}_n{}_{}.pickle".format(self.config.generationCount, self.config.populationSize, len(model.x), model.rand)
+		f_name = "stat_gen{}_pop{}_n{}_{}.pickle".format(self.config.generationCount, self.config.populationSize, len(ind.model.w), ind.rand)
 
 		save_model(stats, 'output/'+f_name)
-		y_hat = model.generate(len(self.observed_sequence))
+		y_hat = ind.model.generate(len(self.observed_sequence))
 		self.gen = y_hat
 		#plt.hist(y_hat, 100)
 		#plt.show()
-		music_save("gen{}_pop{}_n{}_{}".format(self.config.generationCount, self.config.populationSize, len(model.x), model.rand), y_hat, self.sr)
+		music_save("gen{}_pop{}_n{}_{}".format(self.config.generationCount, self.config.populationSize, len(ind.model.w), ind.rand), y_hat, self.sr)

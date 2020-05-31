@@ -1,10 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sat May 16 10:38:24 2020
-Individual class for HMM model
-"""
-
+import math
 import numpy as np
 import utilities.utils as utils
 from ALM import AutoRegressiveLM as alm
@@ -16,8 +10,7 @@ class Individual:
 	maxLimit=None
 	N = None
 	rand = None
-
-	learningRate=None
+	multi_dim_mut_rate = None
 	observed_sequence = None
 
 	def __init__(self):
@@ -26,8 +19,14 @@ class Individual:
 		self.x = self.model.get_w()
 
 		self.fit = None
+		self.learningRate = 1 / math.sqrt(2*len(self.x))
+		self.learningRate2 = 1 / math.sqrt(2*math.sqrt(len(self.x)))
 
-		self.sigma = np.random.uniform(0.1,0.9)
+		if Individual.multi_dim_mut_rate:
+			self.sigma = [np.random.uniform(0.9,0.1) for _ in range(len(self.x))]
+			print("here")
+		else:
+			self.sigma = np.random.uniform(0.1,0.9)
 
 	def crossover(self, other):
 		alpha = np.random.random()
@@ -43,13 +42,29 @@ class Individual:
 		other.fit = None
 
 	def mutate(self):
-		self.sigma=self.sigma*np.exp(self.learningRate*np.random.normal(0,1))
-		if self.sigma < self.minSigma: self.sigma=self.minSigma
-		if self.sigma > self.maxSigma: self.sigma=self.maxSigma
+		if Individual.multi_dim_mut_rate:
+			tmp = self.learningRate * np.random.normal(0,1)
+			
+			# Mutation for model.w
+			for i in range(len(self.x)):
+				self.sigma[i] = self.sigma[i]*np.exp(tmp + self.learningRate2*np.random.normal(0,1))
+				if self.sigma[i] < self.minSigma: self.sigma[i] = self.minSigma
+				if self.sigma[i] > self.maxSigma: self.sigma[i] = self.maxSigma
+				self.x[i] = self.x[i] + (self.maxLimit-self.minLimit)*self.sigma[i]*np.random.normal(0,1)
+			
+				if self.x[i] > self.maxLimit: self.x[i]=self.maxLimit
+				if self.x[i] < self.minLimit: self.x[i]=self.minLimit
+		else:
+			self.sigma=self.sigma*np.exp(self.learningRate*np.random.normal(0,1))
+			if self.sigma < self.minSigma: self.sigma=self.minSigma
+			if self.sigma > self.maxSigma: self.sigma=self.maxSigma
 
-		# Mutation for model.w
-		for i in range(len(self.x)):
-			self.x[i] = self.x[i] + (self.maxLimit-self.minLimit)*self.sigma*np.random.normal(0,1)
+			# Mutation for model.w
+			for i in range(len(self.x)):
+				self.x[i] = self.x[i] + (self.maxLimit-self.minLimit)*self.sigma*np.random.normal(0,1)
+
+				if self.x[i] > self.maxLimit: self.x[i]=self.maxLimit
+				if self.x[i] < self.minLimit: self.x[i]=self.minLimit
 
 		self.model.set_w(self.x)
 		self.fit = None
