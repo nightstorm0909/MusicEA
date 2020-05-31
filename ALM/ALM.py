@@ -2,15 +2,14 @@ import random
 import numpy as np
 
 class AutoRegressiveLM:
-	N = 3
-	rand = None
-
-	def __init__(self, w: np.ndarray = None):
-		if w is None:
+	def __init__(self, N:int = None, rand: bool = None, w: np.ndarray = None):
+		if w is None and N is not None:
 			#self.w = [random.random() for _ in range(AutoRegressiveLM.N)]
-			self.w = np.random.uniform(-1, 1, AutoRegressiveLM.N)
+			self.N = N
+			self.w = np.random.uniform(-1, 1, self.N)
 		else:
 			self.w = w
+		self.rand = rand
 
 	def generate(self, length: int) -> np.ndarray:
 		'''

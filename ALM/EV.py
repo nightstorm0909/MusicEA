@@ -32,8 +32,8 @@ class EV:
 		Individual.learningRate = config.learningRate
 		Individual.minLimit=config.minLimit
 		Individual.maxLimit=config.maxLimit
-		alm.n = config.n
-		alm.rand = config.random
+		Individual.N = config.n
+		Individual.rand = config.random
 
 		# Population initialization
 		Population.crossoverFraction = config.crossoverFraction
@@ -84,15 +84,14 @@ class EV:
 
 		# plot accumulated stats to file/screen using matplotlib
 		stats.plot()
+		model = stats.bestIndividual[-1]
 
 		# save statistics
-		f_name = "stat_gen{}_pop{}_n{}_{}.pickle".format(self.config.generationCount, self.config.populationSize, len(stats.bestIndividual[-1].x), self.config.random)
+		f_name = "stat_gen{}_pop{}_n{}_{}.pickle".format(self.config.generationCount, self.config.populationSize, len(model.x), model.rand)
 
 		save_model(stats, 'output/'+f_name)
-		model = alm()
-		model.set_w(stats.bestIndividual[-1].x)
 		y_hat = model.generate(len(self.observed_sequence))
 		self.gen = y_hat
 		#plt.hist(y_hat, 100)
 		#plt.show()
-		music_save("gen{}_pop{}_n{}_{}".format(self.config.generationCount, self.config.populationSize, len(stats.bestIndividual[-1].x), self.config.random), y_hat, self.sr)
+		music_save("gen{}_pop{}_n{}_{}".format(self.config.generationCount, self.config.populationSize, len(model.x), model.rand), y_hat, self.sr)

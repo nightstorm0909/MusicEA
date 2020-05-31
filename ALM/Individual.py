@@ -14,12 +14,14 @@ class Individual:
 	maxSigma=1
 	minLimit=None
 	maxLimit=None
+	N = None
+	rand = None
 
 	learningRate=None
 	observed_sequence = None
 
 	def __init__(self):
-		self.model = alm()
+		self.model = alm(N = Individual.N, rand = Individual.rand)
 
 		self.x = self.model.get_w()
 
