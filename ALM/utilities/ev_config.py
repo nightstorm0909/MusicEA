@@ -22,10 +22,12 @@ class EV_Config:
 			 'randomSeed': (int,True),
 			 'crossoverFraction': (float,True),
 			 'learningRate':(float,True),
-			 'useFullSequence':(bool,True),
 			 'minLimit': (float,True),
 			 'maxLimit': (float,True),
-			 'samplingRate': (int,True)
+			 'samplingRate': (int,True),
+			 'n': (int,True),
+			 'random': (bool,True),
+			 'reduceLength': (int,True)
 			 }
 
 	#constructor

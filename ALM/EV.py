@@ -21,7 +21,7 @@ class EV:
 		y, sr = music_signal(music_filename)
 		self.sr = config.samplingRate
 		self.observed_sequence = librosa.core.resample(y, sr, self.sr)
-		self.observed_sequence =self.observed_sequence[:int(len(self.observed_sequence)/3)] 
+		self.observed_sequence =self.observed_sequence[:int(len(self.observed_sequence)/config.reduceLength)] 
 		print("[INFO] resampled sequence length: ", self.observed_sequence.shape)
 
 		# setup random number generator
@@ -32,6 +32,8 @@ class EV:
 		Individual.learningRate = config.learningRate
 		Individual.minLimit=config.minLimit
 		Individual.maxLimit=config.maxLimit
+		alm.n = config.n
+		alm.rand = config.random
 
 		# Population initialization
 		Population.crossoverFraction = config.crossoverFraction
@@ -84,7 +86,7 @@ class EV:
 		stats.plot()
 
 		# save statistics
-		f_name = "stat_gen{}_pop{}.pickle".format(self.config.generationCount, self.config.populationSize)
+		f_name = "stat_gen{}_pop{}_n{}_{}.pickle".format(self.config.generationCount, self.config.populationSize, len(stats.bestIndividual[-1].x), self.config.random)
 
 		save_model(stats, 'output/'+f_name)
 		model = alm()
@@ -93,4 +95,4 @@ class EV:
 		self.gen = y_hat
 		#plt.hist(y_hat, 100)
 		#plt.show()
-		#music_save("gen{}_pop{}".format(self.config.generationCount, self.config.populationSize), y_hat, self.sr)
+		music_save("gen{}_pop{}_n{}_{}".format(self.config.generationCount, self.config.populationSize, len(stats.bestIndividual[-1].x), self.config.random), y_hat, self.sr)

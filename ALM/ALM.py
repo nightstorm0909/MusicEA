@@ -3,6 +3,8 @@ import numpy as np
 
 class AutoRegressiveLM:
 	N = 3
+	rand = None
+
 	def __init__(self, w: np.ndarray = None):
 		if w is None:
 			#self.w = [random.random() for _ in range(AutoRegressiveLM.N)]
@@ -17,8 +19,10 @@ class AutoRegressiveLM:
 		history = np.zeros(self.w.shape[0])
 		generated_seq = []
 		for i in range(length):
-			a0 = np.random.normal(0, 1, 1)
-			#a0 = 1
+			if self.rand:
+				a0 = np.random.normal(0, 1, 1)
+			else:
+				a0 = 1
 			history = np.insert(history, 0, a0)[:-1]
 			res = np.sum(self.w * history)
 			generated_seq.append(res)
@@ -31,7 +35,10 @@ class AutoRegressiveLM:
 		'''
 		Returns a generated value according to the history provided
 		'''
-		a0 = np.random.normal(0, 1, 1)
+		if self.rand:
+			a0 = np.random.normal(0, 1, 1)
+		else:
+			a0 = 1
 		history = np.insert(history, 0, a0)[:-1]
 		res = np.sum(self.w * history)
 		return res

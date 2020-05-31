@@ -67,6 +67,7 @@ class EV_Stats:
 		#if gen not specified, print latest
 		if gen is None: gen = len(self.bestFit)-1
 		print('Generation:',gen)
+		print('Best Individual: ', self.bestIndividual[gen].x)
 		print('Best fitness	 : {:6.3f}'.format(self.bestFit[gen]))
 		print('Mean fitness	 : {:6.3f}'.format(self.meanFit[gen]))
 		print('Stddev fitness   : {:6.3f}'.format(self.stddevFit[gen]))
