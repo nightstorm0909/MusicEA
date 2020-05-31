@@ -24,7 +24,6 @@ class Individual:
 
 		if Individual.multi_dim_mut_rate:
 			self.sigma = [np.random.uniform(0.9,0.1) for _ in range(len(self.x))]
-			print("here")
 		else:
 			self.sigma = np.random.uniform(0.1,0.9)
 
