@@ -71,7 +71,7 @@ class EV_Stats:
 		print('Best Individual: ', self.bestIndividual[gen].x)
 		print('Best fitness	 : {:6.3f}'.format(self.bestFit[gen]))
 		print('Mean fitness	 : {:6.3f}'.format(self.meanFit[gen]))
-		print('Stddev fitness   : {:6.3f}'.format(self.stddevFit[gen]))
+		print('Stddev fitness   : {}'.format(self.stddevFit[gen]))
 		print('Mutation Strength: {}'.format(str(self.mutationStrength[gen])))
 
 	def plot(self):

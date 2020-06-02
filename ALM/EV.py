@@ -90,11 +90,23 @@ class EV:
 		ind = stats.bestIndividual[-1]
 
 		# save statistics
-		f_name = "stat_gen{}_pop{}_n{}_{}.pickle".format(self.config.generationCount, self.config.populationSize, len(ind.model.w), ind.rand)
+		f_name = "stat_gen{}_pop{}_n{}_rand{}_reduce{}.pickle".format(self.config.generationCount,
+																						self.config.populationSize,
+																						len(ind.model.w),
+																						ind.rand,
+																						self.config.reduceLength)
 
 		save_model(stats, 'output/'+f_name)
 		y_hat = ind.model.generate(len(self.observed_sequence))
 		self.gen = y_hat
 		#plt.hist(y_hat, 100)
 		#plt.show()
-		music_save("gen{}_pop{}_n{}_{}".format(self.config.generationCount, self.config.populationSize, len(ind.model.w), ind.rand), y_hat, self.sr)
+		music_save("gen{}_pop{}_n{}_rand{}_reduce{}".format(self.config.generationCount,
+																			self.config.populationSize,
+																			len(ind.model.w),
+																			ind.rand,
+																			self.config.reduceLength), y_hat, self.sr)
+
+
+
+

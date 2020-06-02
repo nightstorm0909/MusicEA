@@ -38,17 +38,17 @@ plt.xlabel('Lag (frames)')
 plt.subplot(3, 1, 3)
 #autocorrelation_plot(pd.DataFrame(y)[:1024])
 plt.show()
-
+'''
 
 #model  = alm(np.array([1,1,2]))
-model  = alm()
+#model  = alm()
 #gen = model.generate(len(y[:512]))
 print(y.shape, sr)
 s = time.time()
 y_hat = librosa.core.resample(y, sr, 2500)
+y_hat = y_hat[:int(len(y_hat)/4)]
 print(y_hat.shape)
-print("fitness:{}, in {} mins".format(model.fitness(y_hat), (time.time() - s) / 60))
-#music_save("train", y_hat[:], 2500)
+#print("fitness:{}, in {} mins".format(model.fitness(y_hat), (time.time() - s) / 60))
+music_save("train", y_hat[:], 2500)
 #y_hat2 = librosa.core.resample(y_hat, 1000, sr)
 #music_save("test2", y_hat2, sr)
-'''
