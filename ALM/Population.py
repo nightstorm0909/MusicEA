@@ -39,6 +39,11 @@ class Population:
 
 		self.population = population
 
+	@classmethod
+	def _evaluateFitness(cls, individual):
+		individual.evaluateFitness()
+		return individual
+
 	def evaluateFitness2(self):
 		population = []
 
@@ -47,13 +52,20 @@ class Population:
 		self.population = population
 
 	@classmethod
-	def _evaluateFitness(cls, individual):
-		individual.evaluateFitness()
-		return individual
-	
-	@classmethod
 	def _evaluateFitness2(cls, individual):
 		individual.evaluateFitness2()
+		return individual
+
+	def evaluateFitnessWithWindow(self):
+		population = []
+
+		population = self.pool.map(Population._evaluateFitnessWithWindow, self.population)
+
+		self.population = population
+
+	@classmethod
+	def _evaluateFitnessWithWindow(cls, individual):
+		individual.evaluateFitnessWithWindow()
 		return individual
 
 	def mutate(self):

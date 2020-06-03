@@ -26,6 +26,7 @@ class EV_Config:
 			 'maxLimit': (float,True),
 			 'samplingRate': (int,True),
 			 'n': (int,True),
+			 'windowSize': (int,True),
 			 'random': (bool,True),
 			 'multiSigma': (bool,True),
 			 'generateFitness': (bool,True),

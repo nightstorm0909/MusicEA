@@ -35,6 +35,7 @@ class EV:
 		Individual.maxLimit=config.maxLimit
 		Individual.N = config.n
 		Individual.rand = config.random
+		Individual.windowSize = config.windowSize
 		Individual.multi_dim_mut_rate = config.multiSigma
 
 		# Population initialization
@@ -62,7 +63,7 @@ class EV:
 			population = Population(self.config.populationSize)
 
 		if self.config.generateFitness:
-			population.evaluateFitness2()
+			population.evaluateFitnessWithWindow()
 		else:
 			population.evaluateFitness()
 
@@ -110,24 +111,27 @@ class EV:
 		ind = stats.bestIndividual[-1]
 
 		# save statistics
-		f_name = "stat_gen{}_pop{}_n{}_rand{}_reduce{}_genFit{}.pickle".format(self.config.generationCount,
+		f_name = "stat_gen{}_pop{}_n{}_rand{}_reduce{}_genFit{}_window{}.pickle".format(self.config.generationCount,
 																						self.config.populationSize,
 																						len(ind.model.w),
 																						ind.rand,
 																						self.config.reduceLength,
-																						self.config.generateFitness)
+																						self.config.generateFitness,
+																						self.config.windowSize)
 
 		save_model(stats, 'output/'+f_name)
-		y_hat = ind.model.generate(len(self.observed_sequence))
+		#y_hat = ind.model.generate(len(self.observed_sequence))
+		y_hat = ind.model.generate_with_window(len(self.observed_sequence))
 		self.gen = y_hat
 		#plt.hist(y_hat, 100)
 		#plt.show()
-		music_save("gen{}_pop{}_n{}_rand{}_reduce{}_genFit{}".format(self.config.generationCount,
+		music_save("gen{}_pop{}_n{}_rand{}_reduce{}_genFit{}_window{}".format(self.config.generationCount,
 																			self.config.populationSize,
 																			len(ind.model.w),
 																			ind.rand,
 																			self.config.reduceLength,
-																			self.config.generateFitness), y_hat, self.sr)
+																			self.config.generateFitness,
+																			self.config.windowSize), y_hat, self.sr)
 
 
 

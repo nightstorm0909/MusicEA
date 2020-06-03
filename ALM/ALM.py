@@ -3,7 +3,7 @@ import numpy as np
 import warnings
 
 class AutoRegressiveLM:
-	def __init__(self, N:int = None, rand: bool = None, w: np.ndarray = None):
+	def __init__(self, N:int = None, rand: bool = None, window_size: int = None, w: np.ndarray = None):
 		if w is None and N is not None:
 			#self.w = [random.random() for _ in range(AutoRegressiveLM.N)]
 			self.N = N
@@ -11,6 +11,7 @@ class AutoRegressiveLM:
 		else:
 			self.w = w
 		self.rand = rand
+		self.window_size = window_size
 
 	def generate(self, length: int) -> np.ndarray:
 		'''
@@ -43,6 +44,32 @@ class AutoRegressiveLM:
 		res = np.sum(self.w * history)
 		return res
 
+	def generate_with_window(self, size: int) -> np.ndarray:
+		'''
+		Returns a generated sequence with window according to the model
+		'''
+		generated_seq = []
+		
+		length = size / self.window_size
+		for j in range(int(np.ceil(length))):
+			history = np.zeros(self.w.shape[0])
+			if j > 0:
+				#print(j, j*self.window_size, length, len(seq))
+				history = np.insert(history, 0, generated_seq[-1])[:-1]
+
+			for i in range(self.window_size):
+				if self.rand:
+					a0 = np.random.normal(0, 1, 1)
+				else:
+					a0 = 1
+				history = np.insert(history, 0, a0)[:-1]
+				res = np.sum(self.w * history)
+				generated_seq.append(res)
+				history[0] = res
+				#print("generate: {}, history: {}, seq: {}". format(generated_seq, history, seq))
+
+		return np.array(generated_seq[:size])
+
 	def fitness(self, seq: np.ndarray) -> np.ndarray:
 		'''
 		Calculate the root mean square between generated sequence with history and given sequence
@@ -72,6 +99,28 @@ class AutoRegressiveLM:
 			except Warning:
 				#print('here')
 				rmse = 10000
+		return -rmse
+
+	def fitness_with_window(self, seq: np.ndarray) -> np.ndarray:
+		'''
+		Calculate the root mean square between generated sequence with window and given sequence
+		'''
+		#generated_seq = self.generate(len(seq))
+		rmse = 0
+		generated_seq = []
+		length = len(seq) / self.window_size
+		for j in range(int(np.ceil(length))):
+			history = np.zeros(self.w.shape[0])
+			if j > 0:
+				#print(j, j*self.window_size, length, len(seq))
+				history = np.insert(history, 0, seq[int(j*self.window_size)])[:-1]
+
+			for i in range(self.window_size):
+				generated_seq.append(self.generate_with_history(history))
+				history = np.insert(history, 0, seq[i])[:-1]
+				#print("generate: {}, history: {}, seq: {}". format(generated_seq, history, seq))
+
+		rmse = np.sqrt(np.sum((seq - generated_seq[:len(seq)])**2))
 		return -rmse
 
 	def __str__(self):

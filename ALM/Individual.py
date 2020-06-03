@@ -12,9 +12,10 @@ class Individual:
 	rand = None
 	multi_dim_mut_rate = None
 	observed_sequence = None
+	windowSize = None
 
 	def __init__(self):
-		self.model = alm(N = Individual.N, rand = Individual.rand)
+		self.model = alm(N = Individual.N, rand = Individual.rand, window_size = Individual.windowSize)
 
 		self.x = self.model.get_w()
 
@@ -79,5 +80,10 @@ class Individual:
 			self.fit = self.model.fitness2(self.observed_sequence)
 			#print("fitness: ", self.fit)
 
+	def evaluateFitnessWithWindow(self):
+		if self.fit == None:
+			self.fit = self.model.fitness_with_window(self.observed_sequence)
+			#print("fitness: ", self.fit)
+	
 	def __str__(self):
 		return '[Individual: {}:: . Fit:{:6.3f}; Sigma:{:6.3f}]'.format(self.x, self.fit, self.sigma)
