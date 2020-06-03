@@ -42,7 +42,7 @@ class EV_Stats:
 		self.stddevFit=[]
 		self.mutationStrength = []
 		self.finished_time = 0.0
-		self.last_population
+		self.last_population = None
 
 	def accumulate(self, pop):
 		#find state with max fitness
