@@ -42,6 +42,7 @@ class EV_Stats:
 		self.stddevFit=[]
 		self.mutationStrength = []
 		self.finished_time = 0.0
+		self.last_population
 
 	def accumulate(self, pop):
 		#find state with max fitness
@@ -63,6 +64,7 @@ class EV_Stats:
 		fits = [p.fit for p in pop]
 		self.meanFit.append(mean(fits))
 		self.stddevFit.append(stdev(fits))
+		self.last_population = pop
 
 	def print(self, gen=None):
 		#if gen not specified, print latest
