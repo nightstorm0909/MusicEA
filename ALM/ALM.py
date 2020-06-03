@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import warnings
 
 class AutoRegressiveLM:
 	def __init__(self, N:int = None, rand: bool = None, w: np.ndarray = None):
@@ -44,7 +45,7 @@ class AutoRegressiveLM:
 
 	def fitness(self, seq: np.ndarray) -> np.ndarray:
 		'''
-		Calculate the root mean square between generated sequence and given sequence
+		Calculate the root mean square between generated sequence with history and given sequence
 		'''
 		#generated_seq = self.generate(len(seq))
 		rmse = 0
@@ -56,6 +57,21 @@ class AutoRegressiveLM:
 			#print("generate: {}, history: {}, seq: {}". format(generated_seq, history, seq))
 
 		rmse = np.sqrt(np.sum((seq - generated_seq)**2))
+		return -rmse
+
+	def fitness2(self, seq: np.ndarray) -> np.ndarray:
+		'''
+		Calculate the root mean square between generated sequence and given sequence
+		'''
+		generated_seq = self.generate(len(seq))
+		rmse = 0
+		with warnings.catch_warnings():
+			warnings.filterwarnings('error')
+			try:
+				rmse = np.sqrt(np.sum((seq - generated_seq)**2))
+			except Warning:
+				#print('here')
+				rmse = 10000
 		return -rmse
 
 	def __str__(self):

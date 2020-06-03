@@ -47,7 +47,11 @@ class EV:
 		start = time.time()
 		# create initial Population (random initialization)
 		population = Population(self.config.populationSize)
-		population.evaluateFitness()
+
+		if self.config.generateFitness:
+			population.evaluateFitness2()
+		else:
+			population.evaluateFitness()
 
 		# accumulate & print stats
 		stats = EV_Stats()
@@ -72,7 +76,10 @@ class EV:
 			offsprings.mutate()
 
 			#update fitness values
-			offsprings.evaluateFitness()
+			if self.config.generateFitness:
+				offsprings.evaluateFitness2()
+			else:
+				offsprings.evaluateFitness()
 
 			#survivor selection: elitist truncation using parents+offspring
 			population.combinePops(offsprings)
@@ -90,22 +97,24 @@ class EV:
 		ind = stats.bestIndividual[-1]
 
 		# save statistics
-		f_name = "stat_gen{}_pop{}_n{}_rand{}_reduce{}.pickle".format(self.config.generationCount,
+		f_name = "stat_gen{}_pop{}_n{}_rand{}_reduce{}_genFit{}.pickle".format(self.config.generationCount,
 																						self.config.populationSize,
 																						len(ind.model.w),
 																						ind.rand,
-																						self.config.reduceLength)
+																						self.config.reduceLength,
+																						self.config.generateFitness)
 
 		save_model(stats, 'output/'+f_name)
 		y_hat = ind.model.generate(len(self.observed_sequence))
 		self.gen = y_hat
 		#plt.hist(y_hat, 100)
 		#plt.show()
-		music_save("gen{}_pop{}_n{}_rand{}_reduce{}".format(self.config.generationCount,
+		music_save("gen{}_pop{}_n{}_rand{}_reduce{}_genFit{}".format(self.config.generationCount,
 																			self.config.populationSize,
 																			len(ind.model.w),
 																			ind.rand,
-																			self.config.reduceLength), y_hat, self.sr)
+																			self.config.reduceLength,
+																			self.config.generateFitness), y_hat, self.sr)
 
 
 

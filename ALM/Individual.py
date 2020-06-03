@@ -74,5 +74,10 @@ class Individual:
 			self.fit = self.model.fitness(self.observed_sequence)
 			#print("fitness: ", self.fit)
 
+	def evaluateFitness2(self):
+		if self.fit == None:
+			self.fit = self.model.fitness2(self.observed_sequence)
+			print("fitness: ", self.fit)
+
 	def __str__(self):
 		return '[Individual: {}:: . Fit:{:6.3f}; Sigma:{:6.3f}]'.format(self.x, self.fit, self.sigma)

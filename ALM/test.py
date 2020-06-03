@@ -21,7 +21,6 @@ args = init_flags_parser()
 args = args.parse_args()
 print(args)
 
-plt.figure()
 y, sr = music_signal(args.input)
 plt.figure()
 plt.plot(y)
@@ -41,14 +40,15 @@ plt.show()
 '''
 
 #model  = alm(np.array([1,1,2]))
-#model  = alm()
+model  = alm(N=4)
 #gen = model.generate(len(y[:512]))
 print(y.shape, sr)
 s = time.time()
-y_hat = librosa.core.resample(y, sr, 2500)
-y_hat = y_hat[:int(len(y_hat)/4)]
+y_hat = librosa.core.resample(y, sr, 2000)
+y_hat = y_hat[:int(len(y_hat)/6)]
 print(y_hat.shape)
+fit = model.fitness2(y_hat)
 #print("fitness:{}, in {} mins".format(model.fitness(y_hat), (time.time() - s) / 60))
-music_save("train", y_hat[:], 2500)
+music_save("train", y_hat[:], 2000)
 #y_hat2 = librosa.core.resample(y_hat, 1000, sr)
 #music_save("test2", y_hat2, sr)

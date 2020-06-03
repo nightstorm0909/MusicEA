@@ -28,6 +28,7 @@ class EV_Config:
 			 'n': (int,True),
 			 'random': (bool,True),
 			 'multiSigma': (bool,True),
+			 'generateFitness': (bool,True),
 			 'reduceLength': (int,True)
 			 }
 
