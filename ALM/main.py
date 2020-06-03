@@ -14,7 +14,8 @@ from utilities.ev_config import EV_Config
 def init_flags_parser():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-c','--inputConfig', type=str, default=None, help='configuration file')
-	parser.add_argument('-m', '--inputMusic', type=str, default=None, help='midi file')
+	parser.add_argument('-m', '--inputMusic', type=str, default=None, help='music file')
+	parser.add_argument('-s', '--statsFile', type=str, default=None, help='saved stats file')
 	parser.add_argument('-q', '--quiet', action = "store_true", default = False, help='quiet mode')
 	return parser
 
@@ -44,6 +45,7 @@ def main(args=None):
 	# get filenames
 	config_filename = arguments.inputConfig
 	music_filename = arguments.inputMusic
+	stats_filename = arguments.statsFile
 
 	# get EV3 config parameters
 	config = EV_Config(os.path.join(path, config_filename))
@@ -52,7 +54,7 @@ def main(args=None):
 	print("Config parameters:\n" + str(config))
 
  	# run evolution
-	ev = EV(config, music_filename)
+	ev = EV(config, music_filename, stats_filename)
 	ev.run()
 
 	print("[INFO] Finished in {:6.3f} hours".format((time.time() - start_time)/3600))

@@ -16,13 +16,14 @@ from utilities.utils import EV_Stats, save_model
 from utilities.music_utils import music_signal, music_save
 
 class EV:
-	def __init__(self, config, music_filename):
+	def __init__(self, config, music_filename, stats_filename = None):
 		# get sequence
 		y, sr = music_signal(music_filename)
 		self.sr = config.samplingRate
 		self.observed_sequence = librosa.core.resample(y, sr, self.sr)
 		self.observed_sequence =self.observed_sequence[:int(len(self.observed_sequence)/config.reduceLength)] 
 		print("[INFO] resampled sequence length: ", self.observed_sequence.shape)
+		self.stats_filename = stats_filename
 
 		# setup random number generator
 		np.random.seed(config.randomSeed)
@@ -46,7 +47,19 @@ class EV:
 	def run(self):
 		start = time.time()
 		# create initial Population (random initialization)
-		population = Population(self.config.populationSize)
+		
+		if self.stats_filename is not None:
+			with open(self.stats_filename, 'rb') as f:
+				stats = pickle.load(f)
+			
+			Individual.N = len(stats.last_population[0].model.w)
+			Individual.rand = stats.last_population[0].rand
+			population = Population(len(stats.last_population))
+
+			for i in range(len(stats.last_population)):
+				population[i].model.w = stats.last_population[i].model.get_w()
+		else:
+			population = Population(self.config.populationSize)
 
 		if self.config.generateFitness:
 			population.evaluateFitness2()

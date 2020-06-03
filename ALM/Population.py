@@ -27,7 +27,7 @@ class Population:
 
 	def __setitem__(self, key, newValue):
 		#self.population[key]=newValue
-		pass
+		self.population[key].model.set_w(newValue)
 
 	def copy(self):
 		return copy.deepcopy(self)

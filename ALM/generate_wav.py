@@ -109,9 +109,10 @@ def main(args=None):
 	
 	music_save("{}2".format(new_filename), y_hat, sr2)
 	music_save(new_filename, gen, sr2)
+	return stats
 
 if __name__ == '__main__':
-	main()
+	stats = main()
 	# main(['-m', 'data/Never-Gonna-Give-You-Up-1.mid',
 	#	   '-b','output/stat_gen10_hid32_state7469.pickle',
 	#	   '-s', 'new_song_2'])
