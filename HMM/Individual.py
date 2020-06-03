@@ -98,7 +98,7 @@ class Individual:
 
     def evaluateFitness(self):
         if self.fit == None:
-            self.fit = self.model.score(self.observed_sequence)
+            self.fit = -self.model.score(self.observed_sequence)
 
     def __str__(self):
         return '[Individual. Fit:{:6.3f}; Sigmas:{:6.3f}-{:6.3f}-{:6.3f}]'.format(
