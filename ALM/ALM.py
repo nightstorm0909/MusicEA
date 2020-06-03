@@ -7,7 +7,7 @@ class AutoRegressiveLM:
 		if w is None and N is not None:
 			#self.w = [random.random() for _ in range(AutoRegressiveLM.N)]
 			self.N = N
-			self.w = np.random.uniform(-1, 1, self.N)
+			self.w = np.random.uniform(-10, 10, self.N)
 		else:
 			self.w = w
 		self.rand = rand
