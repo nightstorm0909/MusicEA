@@ -12,7 +12,7 @@ class rnnModel:
 		
 		self.rnn = RNN(self.input_size, self.hidden_size, self.output_size)
 
-	def generate(self, length: int, init: int = None) -> np.ndarray:
+	def generate(self, length: int, init: int = None, seq: list = None) -> np.ndarray:
 		'''
 		Returns a generated sequence according to the model
 		'''
@@ -25,18 +25,22 @@ class rnnModel:
 		#print(init.shape, hidden.shape)
 		for i in range(length):
 			if i > 0:
-				output, hidden = self.rnn(torch.zeros(1, 1), hidden)
+				if seq is None:
+					output, hidden = self.rnn(output, hidden)
+				else:
+					output, hidden = self.rnn(torch.tensor(seq[i-1]).view(-1, 1), hidden)
 			else:
 				output, hidden = self.rnn(init, hidden)
 			generated_seq.append(output.detach().numpy()[0][0])
-
+		
+		#print(generated_seq[-20:])
 		return np.array(generated_seq)
 
 	def fitness(self, seq: np.ndarray) -> np.ndarray:
 		'''
 		Calculate the root mean square between generated sequence with history and given sequence
 		'''
-		generated_seq = self.generate(len(seq), np.random.normal(0, 1))
+		generated_seq = self.generate(len(seq), np.random.normal(0, 1), seq)
 		rmse = np.sqrt(np.sum((seq - generated_seq)**2))
 		print(rmse)
 		return -rmse
