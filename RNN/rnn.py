@@ -42,7 +42,7 @@ class rnnModel:
 		'''
 		generated_seq = self.generate(len(seq), np.random.normal(0, 1), seq)
 		rmse = np.sqrt(np.sum((seq - generated_seq)**2))
-		print(rmse)
+		#print(rmse)
 		return -rmse
 
 	def __str__(self):

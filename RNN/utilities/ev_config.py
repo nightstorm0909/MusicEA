@@ -28,6 +28,7 @@ class EV_Config:
 			 'outputSize': (int,True),
 			 'hiddenSize': (int,True),
 			 'inputSize': (int,True),
+			 'nProcesses': (int,True),
 			 'reduceLength': (int,True)
 			 }
 

@@ -41,7 +41,7 @@ class EV:
 
 		# Population initialization
 		Population.crossoverFraction = config.crossoverFraction
-		Population.pool = Pool()
+		Population.pool = Pool(processes = config.nProcesses)
 
 		# save sequence and config
 		self.config = config
