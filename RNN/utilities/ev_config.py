@@ -27,7 +27,7 @@ class EV_Config:
 			 'samplingRate': (int,True),
 			 'outputSize': (int,True),
 			 'hiddenSize': (int,True),
-			 'nputSize': (int,True),
+			 'inputSize': (int,True),
 			 'reduceLength': (int,True)
 			 }
 

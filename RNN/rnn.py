@@ -12,12 +12,15 @@ class rnnModel:
 		
 		self.rnn = RNN(self.input_size, self.hidden_size, self.output_size)
 
-	def generate(self, init: int, length: int) -> np.ndarray:
+	def generate(self, length: int, init: int = None) -> np.ndarray:
 		'''
 		Returns a generated sequence according to the model
 		'''
 		generated_seq = []
 		hidden = self.rnn.initHidden()
+
+		if init is None:
+			init = np.random.normal(0, 1)
 		init = torch.tensor(init).view(-1, 1)
 		#print(init.shape, hidden.shape)
 		for i in range(length):
@@ -33,8 +36,9 @@ class rnnModel:
 		'''
 		Calculate the root mean square between generated sequence with history and given sequence
 		'''
-		generated_seq = self.generate(np.random.normal(0, 0.1), len(seq))
+		generated_seq = self.generate(len(seq), np.random.normal(0, 1))
 		rmse = np.sqrt(np.sum((seq - generated_seq)**2))
+		print(rmse)
 		return -rmse
 
 	def __str__(self):

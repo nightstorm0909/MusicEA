@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sat May 16 10:38:24 2020
-Population class
-"""
 import copy
 import numpy as np
 from operator import attrgetter
@@ -42,30 +36,6 @@ class Population:
 	@classmethod
 	def _evaluateFitness(cls, individual):
 		individual.evaluateFitness()
-		return individual
-
-	def evaluateFitness2(self):
-		population = []
-
-		population = self.pool.map(Population._evaluateFitness2, self.population)
-
-		self.population = population
-
-	@classmethod
-	def _evaluateFitness2(cls, individual):
-		individual.evaluateFitness2()
-		return individual
-
-	def evaluateFitnessWithWindow(self):
-		population = []
-
-		population = self.pool.map(Population._evaluateFitnessWithWindow, self.population)
-
-		self.population = population
-
-	@classmethod
-	def _evaluateFitnessWithWindow(cls, individual):
-		individual.evaluateFitnessWithWindow()
 		return individual
 
 	def mutate(self):

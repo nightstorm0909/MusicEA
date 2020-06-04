@@ -7,6 +7,7 @@ import librosa
 import numpy as np
 import matplotlib.pyplot as plt
 from statistics import mean,stdev
+import torch
 
 #Print some useful stats to screen
 def printStats(pop,gen):
@@ -29,9 +30,11 @@ def printStats(pop,gen):
 def normalize(x):
 	return x / x.sum(0)
 
-def save_model(model, filename):
-	with open(filename, 'wb') as f:
-		pickle.dump(model, f)
+def save_model(stats, filename):
+	with open("{}.pickle".format(filename), 'wb') as f:
+		pickle.dump(stats, f)
+	model = stats.bestIndividual[-1].model.rnn
+	torch.save(model.state_dict(), "{}wt.pt".format(filename))
 
 #Basic class for computing, managing, plotting EV3 run stats
 class EV_Stats:
@@ -63,14 +66,16 @@ class EV_Stats:
 		#compute mean and stddev
 		fits = [p.fit for p in pop]
 		self.meanFit.append(mean(fits))
-		self.stddevFit.append(stdev(fits))
+		#print(fits, self.meanFit)
+		#self.stddevFit.append(stdev(fits))
+		self.stddevFit.append(np.std(fits))
 		self.last_population = pop
 
 	def print(self, gen=None):
 		#if gen not specified, print latest
 		if gen is None: gen = len(self.bestFit)-1
 		print('Generation:',gen)
-		print('Best Individual: ', self.bestIndividual[gen].x)
+		#print('Best Individual: ', self.bestIndividual[gen])
 		print('Best fitness	 : {:6.3f}'.format(self.bestFit[gen]))
 		print('Mean fitness	 : {:6.3f}'.format(self.meanFit[gen]))
 		print('Stddev fitness   : {}'.format(self.stddevFit[gen]))
@@ -94,7 +99,16 @@ class EV_Stats:
 		plt.plot(gens,self.stddevFit)
 		plt.ylabel('Stddev Fit')
 		plt.subplot(414)
-		plt.plot(gens,self.mutationStrength)
+		
+		tmp = {}
+		for key in self.mutationStrength[0]:
+			tmp[key] = []
+		for i in range(len(self.mutationStrength)):
+			for key in self.mutationStrength[i]:
+				tmp[key].append(self.mutationStrength[i][key])
+
+		for key in tmp:
+			plt.plot(gens, tmp[key])
 		plt.ylabel('Mutation Strength')
 
 		#write plots to .png file, then display to screen

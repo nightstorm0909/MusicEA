@@ -11,9 +11,10 @@ import matplotlib.pyplot as plt
 from Population import Population
 from Individual import Individual
 from multiprocessing import Pool
-from ALM import AutoRegressiveLM as alm
+from rnn import rnnModel
 from utilities.utils import EV_Stats, save_model
 from utilities.music_utils import music_signal, music_save
+import torch
 
 class EV:
 	def __init__(self, config, music_filename, stats_filename = None):
@@ -27,16 +28,16 @@ class EV:
 
 		# setup random number generator
 		np.random.seed(config.randomSeed)
+		torch.random.manual_seed(config.randomSeed)
 
 		# Individual initialization
 		Individual.observed_sequence = self.observed_sequence
 		#Individual.learningRate = config.learningRate
 		Individual.minLimit=config.minLimit
 		Individual.maxLimit=config.maxLimit
-		Individual.N = config.n
-		Individual.rand = config.random
-		Individual.windowSize = config.windowSize
-		Individual.multi_dim_mut_rate = config.multiSigma
+		Individual.inputSize = config.inputSize
+		Individual.hiddenSize = config.hiddenSize
+		Individual.outputSize = config.outputSize
 
 		# Population initialization
 		Population.crossoverFraction = config.crossoverFraction
@@ -49,23 +50,19 @@ class EV:
 		start = time.time()
 		# create initial Population (random initialization)
 		
-		if self.stats_filename is not None:
+		'''if self.stats_filename is not None:
 			with open(self.stats_filename, 'rb') as f:
 				stats = pickle.load(f)
 			
-			Individual.N = len(stats.last_population[0].model.w)
 			Individual.rand = stats.last_population[0].rand
 			population = Population(len(stats.last_population))
 
 			for i in range(len(stats.last_population)):
 				population[i].model.w = stats.last_population[i].model.get_w()
-		else:
-			population = Population(self.config.populationSize)
+		else:'''
+		population = Population(self.config.populationSize)
 
-		if self.config.generateFitness:
-			population.evaluateFitnessWithWindow()
-		else:
-			population.evaluateFitness()
+		population.evaluateFitness()
 
 		# accumulate & print stats
 		stats = EV_Stats()
@@ -90,10 +87,7 @@ class EV:
 			offsprings.mutate()
 
 			#update fitness values
-			if self.config.generateFitness:
-				offsprings.evaluateFitness2()
-			else:
-				offsprings.evaluateFitness()
+			offsprings.evaluateFitness()
 
 			#survivor selection: elitist truncation using parents+offspring
 			population.combinePops(offsprings)
@@ -111,27 +105,24 @@ class EV:
 		ind = stats.bestIndividual[-1]
 
 		# save statistics
-		f_name = "stat_gen{}_pop{}_n{}_rand{}_reduce{}_genFit{}_window{}.pickle".format(self.config.generationCount,
+		f_name = "stat_gen{}_pop{}_in{}_h{}_o{}_reduce{}".format(self.config.generationCount,
 																						self.config.populationSize,
-																						len(ind.model.w),
-																						ind.rand,
-																						self.config.reduceLength,
-																						self.config.generateFitness,
-																						self.config.windowSize)
+																						Individual.inputSize,
+																						Individual.hiddenSize,
+																						Individual.outputSize,
+																						self.config.reduceLength)
 
 		save_model(stats, 'output/'+f_name)
-		#y_hat = ind.model.generate(len(self.observed_sequence))
-		y_hat = ind.model.generate_with_window(len(self.observed_sequence))
+		y_hat = ind.model.generate(len(self.observed_sequence))
 		self.gen = y_hat
 		#plt.hist(y_hat, 100)
 		#plt.show()
-		music_save("gen{}_pop{}_n{}_rand{}_reduce{}_genFit{}_window{}".format(self.config.generationCount,
+		music_save("gen{}_pop{}_in{}_h{}_o{}_reduce{}".format(self.config.generationCount,
 																			self.config.populationSize,
-																			len(ind.model.w),
-																			ind.rand,
-																			self.config.reduceLength,
-																			self.config.generateFitness,
-																			self.config.windowSize), y_hat, self.sr)
+																			Individual.inputSize,
+																			Individual.hiddenSize,
+																			Individual.outputSize,
+																			self.config.reduceLength), y_hat, self.sr)
 
 
 

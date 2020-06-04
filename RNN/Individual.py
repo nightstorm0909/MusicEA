@@ -2,22 +2,23 @@ import math
 import numpy as np
 import utilities.utils as utils
 from rnn import rnnModel
+import torch
 
 class Individual:
 	minSigma=1e-100
 	maxSigma=1
 	minLimit=None
 	maxLimit=None
-	IndividualSize = None
+	inputSize = None
 	hiddenSize = None
 	outputSize = None
 	rand = None
 	observed_sequence = None
 
 	def __init__(self):
-		model  = rnnModel(input_size = IndividualSize, hidden_size = hiddenSize, outputSize = outputSize)
+		self.model  = rnnModel(input_size = Individual.inputSize, hidden_size = Individual.hiddenSize, output_size = Individual.outputSize)
 
-		self.state_dict = self.get_w()
+		self.state_dict = self.model.get_w()
 		self.states = list(self.state_dict.values())
 		self.keys = list(self.state_dict.keys())
 		
@@ -25,47 +26,52 @@ class Individual:
 		self.learningRate = 1 / math.sqrt(2*len(self.keys))
 		self.learningRate2 = 1 / math.sqrt(2*math.sqrt(len(self.keys)))
 
-		self.sigma = [np.random.uniform(0.9,0.1) for _ in range(len(self.keys))]
+		#self.sigma = [np.random.uniform(0.9,0.1) for _ in range(len(self.keys))]
+		self.sigma = {}
+		for key in self.keys:
+			self.sigma[key] = np.random.uniform(0.9, 0.1)
 
 	def crossover(self, other):
-		alpha = np.random.random()
-
-		# crossover for model.w
-		tmp = (self.x*alpha) + (other.x*(1-alpha))
-		other.x = (self.x*(1-alpha)) + (other.x*alpha)
-		self.x = tmp
+		#print("="*100)
+		#print("before")
+		#print('self.state_dict:{}, other.state_dict[key]:{}'.format(self.state_dict, other.state_dict))
+		for key in self.keys:
+			alpha = np.random.random()
+			tmp = (self.state_dict[key]*alpha) + (other.state_dict[key]*(1-alpha))
+			other.state_dict[key] = (self.state_dict[key]*(1-alpha)) + (other.state_dict[key]*alpha)
+			self.state_dict[key] = tmp
 		
-		self.model.set_w(self.x)
-		other.model.set_w(other.x)
+		self.model.set_w(self.state_dict)
+		other.model.set_w(other.state_dict)
+		#print("After")
+		#print('self.state_dict:{}, other.state_dict:{}'.format(self.state_dict, other.state_dict))
+		#print('self.model.state_dict:{}, other.model.state_dict:{}'.format(self.model.rnn.state_dict(), other.model.rnn.state_dict()))
+
 		self.fit = None
 		other.fit = None
 
 	def mutate(self):
-		if Individual.multi_dim_mut_rate:
-			tmp = self.learningRate * np.random.normal(0,1)
-			
-			# Mutation for model.w
-			for i in range(len(self.x)):
-				self.sigma[i] = self.sigma[i]*np.exp(tmp + self.learningRate2*np.random.normal(0,1))
-				if self.sigma[i] < self.minSigma: self.sigma[i] = self.minSigma
-				if self.sigma[i] > self.maxSigma: self.sigma[i] = self.maxSigma
-				self.x[i] = self.x[i] + (self.maxLimit-self.minLimit)*self.sigma[i]*np.random.normal(0,1)
-			
-				if self.x[i] > self.maxLimit: self.x[i]=self.maxLimit
-				if self.x[i] < self.minLimit: self.x[i]=self.minLimit
-		else:
-			self.sigma=self.sigma*np.exp(self.learningRate*np.random.normal(0,1))
-			if self.sigma < self.minSigma: self.sigma=self.minSigma
-			if self.sigma > self.maxSigma: self.sigma=self.maxSigma
+		tmp = self.learningRate * np.random.normal(0,1)
+		#print("="*100)
+		#print("before")
+		#print('self.state_dict:{}, model.state_dict:{}'.format(self.state_dict, self.model.rnn.state_dict()))
+		
+		# Mutation for model.state_dict
+		for key in self.keys:
+			self.sigma[key] = self.sigma[key]*np.exp(tmp + self.learningRate2*np.random.normal(0,1))
+			if self.sigma[key] < self.minSigma: self.sigma[key] = self.minSigma
+			if self.sigma[key] > self.maxSigma: self.sigma[key] = self.maxSigma
 
-			# Mutation for model.w
-			for i in range(len(self.x)):
-				self.x[i] = self.x[i] + (self.maxLimit-self.minLimit)*self.sigma*np.random.normal(0,1)
+			for i, value in enumerate(self.state_dict[key]):
+				if np.random.random() < self.sigma[key]:
+					self.state_dict[key][i] = torch.randn(self.state_dict[key][i].shape)
+		
+			#if self.x[i] > self.maxLimit: self.x[i]=self.maxLimit
+			#if self.x[i] < self.minLimit: self.x[i]=self.minLimit
+		#print("After")
+		#print('self.state_dict:{}, model.state_dict:{}'.format(self.state_dict, self.model.rnn.state_dict()))
 
-				if self.x[i] > self.maxLimit: self.x[i]=self.maxLimit
-				if self.x[i] < self.minLimit: self.x[i]=self.minLimit
-
-		self.model.set_w(self.x)
+		self.model.set_w(self.state_dict)
 		self.fit = None
 
 
@@ -74,15 +80,5 @@ class Individual:
 			self.fit = self.model.fitness(self.observed_sequence)
 			#print("fitness: ", self.fit)
 
-	def evaluateFitness2(self):
-		if self.fit == None:
-			self.fit = self.model.fitness2(self.observed_sequence)
-			#print("fitness: ", self.fit)
-
-	def evaluateFitnessWithWindow(self):
-		if self.fit == None:
-			self.fit = self.model.fitness_with_window(self.observed_sequence)
-			#print("fitness: ", self.fit)
-	
 	def __str__(self):
-		return '[Individual: {}:: . Fit:{:6.3f}; Sigma:{:6.3f}]'.format(self.x, self.fit, self.sigma)
+		return '[Individual Fit:{:6.5f}; Sigma:{}]'.format(self.fit, self.sigma)
