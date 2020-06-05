@@ -34,7 +34,7 @@ def save_model(stats, filename):
 	with open("{}.pickle".format(filename), 'wb') as f:
 		pickle.dump(stats, f)
 	model = stats.bestIndividual[-1].model.rnn
-	torch.save(model.state_dict(), "{}wt.pt".format(filename))
+	#torch.save(model.state_dict(), "{}wt.pt".format(filename))
 
 #Basic class for computing, managing, plotting EV3 run stats
 class EV_Stats:
