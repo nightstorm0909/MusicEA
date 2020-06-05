@@ -1,8 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon May 18 17:37:38 2020
-"""
 import time
 import pickle
 import librosa
@@ -41,7 +36,8 @@ class EV:
 
 		# Population initialization
 		Population.crossoverFraction = config.crossoverFraction
-		Population.pool = Pool(processes = config.nProcesses)
+		#Population.pool = Pool(processes = config.nProcesses)
+		Population.pool = Pool()
 
 		# save sequence and config
 		self.config = config
