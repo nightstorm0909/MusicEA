@@ -10,6 +10,9 @@ class Population:
 	def __init__(self, population_size):
 		self.population=[]
 
+		self.population_size = population_size
+		self.tournament_size = int(self.population_size / 5)
+
 		for i in range(population_size):
 			self.population.append(Individual())
 
@@ -57,6 +60,24 @@ class Population:
 				if rn < self.crossoverFraction:
 					self[index1].crossover(self[index2])
 
+	def crossoverByTournament(self):
+		newPop = []
+
+		while len(newPop) < len(self.population):
+			parent1, parent2 = self.tournament_selection()
+			child = parent1.crossoverByTournament(parent2)
+			newPop.append(child)
+		self.population = newPop
+
+	def tournament_selection(self):
+		newPop = []
+		indexes = np.random.choice(self.population_size, size = self.tournament_size, replace = False)
+		
+		for i in indexes:
+			newPop.append(self[i])
+		newPop.sort(key=attrgetter('fit'),reverse=True)
+
+		return newPop[0], newPop[1]
 
 	def conductTournament(self):
 		# binary tournament

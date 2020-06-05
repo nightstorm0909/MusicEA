@@ -74,10 +74,11 @@ class EV:
 			offsprings = population.copy()
 
 			#select mating pool
-			offsprings.conductTournament()
+			#offsprings.conductTournament()
 
 			#perform crossover
-			offsprings.crossover()
+			#offsprings.crossover()
+			offsprings.crossoverByTournament()
 
 			#random mutation
 			offsprings.mutate()

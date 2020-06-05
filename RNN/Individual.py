@@ -1,3 +1,4 @@
+import copy
 import math
 import numpy as np
 import utilities.utils as utils
@@ -49,6 +50,14 @@ class Individual:
 
 		self.fit = None
 		other.fit = None
+	
+	def crossoverByTournament(self, other):
+		child = copy.deepcopy(self)
+		for key in self.keys:
+			for i in range(len(self.state_dict[key])):
+				if np.random.random() < 0.5:
+					child.state_dict[key][i] = other.state_dict[key][i]
+		return child
 
 	def mutate(self):
 		tmp = self.learningRate * np.random.normal(0,1)
