@@ -21,11 +21,11 @@ class rnnModel:
 		hidden = self.rnn.initHidden()
 
 		if init is None:
-			init = np.random.normal(0, 1)
+			init = np.random.normal(1, 0.01)
 		#init = torch.tensor(init).view(-1, 1)
 		init = np.array(init).reshape(-1, 1)
 		#print(init.shape, hidden.shape)
-		for i in range(length):
+		for i in range(length + 1):
 			if i > 0:
 				if seq is None:
 					#output, hidden = self.rnn(output, hidden)
@@ -40,14 +40,14 @@ class rnnModel:
 			generated_seq.append(output[0][0])
 		
 		#print(generated_seq[-20:])
-		return np.array(generated_seq)
+		return np.array(generated_seq[1:])
 
 	def fitness(self, seq: np.ndarray) -> np.ndarray:
 		'''
 		Calculate the root mean square between generated sequence with history and given sequence
 		'''
 		#generated_seq = self.generate(len(seq), np.random.normal(0, 1), seq)
-		generated_seq = self.generate(len(seq), np.random.normal(0, 1))
+		generated_seq = self.generate(len(seq), np.random.normal(1, 0.01))
 		rmse = np.sqrt(np.sum((seq - generated_seq)**2))
 		#print(rmse)
 		return -rmse

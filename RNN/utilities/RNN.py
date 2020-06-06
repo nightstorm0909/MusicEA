@@ -37,7 +37,7 @@ class RNN(nn.Module):
 		pass
 
 class RNN_numpy:
-	def __init__(self, input_size, hidden_size, output_size):
+	def __init__(self, input_size, hidden_size, output_size, n = 6):
 		self.hidden_size = hidden_size
 		self.input_size = input_size
 		self.output_size = output_size
@@ -45,13 +45,19 @@ class RNN_numpy:
 		self.state = {}
 		self.state['i2h_weights'] = np.random.uniform(-1, 1, (self.input_size + self.hidden_size, self.hidden_size))
 		self.state['i2h_bias'] = np.random.uniform(-1, 1, self.hidden_size)
-		self.state['h2h_weights'] = np.random.uniform(-1, 1, (self.hidden_size, self.hidden_size))
-		self.state['h2h_bias'] = np.random.uniform(-1, 1, self.hidden_size)
+
+		if n == 6:
+			self.state['h2h_weights'] = np.random.uniform(-1, 1, (self.hidden_size, self.hidden_size))
+			self.state['h2h_bias'] = np.random.uniform(-1, 1, self.hidden_size)
+
 		self.state['h2o_weights'] = np.random.uniform(-1, 1, (self.hidden_size, self.output_size))
 		self.state['h2o_bias'] = np.random.uniform(-1, 1, self.output_size)
 
 	def sigmoid(self, x):
 		return 1 / (1 + np.exp(-x))
+
+	def relu(self, x):
+		return np.maximum(x, 0)
 
 	def initHidden(self):
 		return np.zeros((1, self.hidden_size))
