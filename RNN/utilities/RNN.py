@@ -44,15 +44,15 @@ class RNN_numpy:
 		self.n = n
 
 		self.state = {}
-		self.state['i2h_weights'] = np.random.uniform(-1, 1, (self.input_size + self.hidden_size, self.hidden_size))
-		self.state['i2h_bias'] = np.random.uniform(-1, 1, self.hidden_size)
+		self.state['i2h_weights'] = np.random.uniform(-10, 10, (self.input_size + self.hidden_size, self.hidden_size))
+		self.state['i2h_bias'] = np.random.uniform(-10, 10, self.hidden_size)
 
 		if self.n == 6:
-			self.state['h2h_weights'] = np.random.uniform(-1, 1, (self.hidden_size, self.hidden_size))
-			self.state['h2h_bias'] = np.random.uniform(-1, 1, self.hidden_size)
+			self.state['h2h_weights'] = np.random.uniform(-10, 10, (self.hidden_size, self.hidden_size))
+			self.state['h2h_bias'] = np.random.uniform(-10, 10, self.hidden_size)
 
-		self.state['h2o_weights'] = np.random.uniform(-1, 1, (self.hidden_size, self.output_size))
-		self.state['h2o_bias'] = np.random.uniform(-1, 1, self.output_size)
+		self.state['h2o_weights'] = np.random.uniform(-10, 10, (self.hidden_size, self.output_size))
+		self.state['h2o_bias'] = np.random.uniform(-10, 10, self.output_size)
 
 	def sigmoid(self, x):
 		return 1 / (1 + np.exp(-x))
