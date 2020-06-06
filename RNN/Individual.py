@@ -77,7 +77,7 @@ class Individual:
 					#self.state_dict[key][i] = np.random.uniform(-1, 1, self.state_dict[key][i].shape)
 		
 			if np.random.random() < self.sigma[key]:
-					self.state_dict[key] = np.random.uniform(-1, 1, self.state_dict[key].shape)
+					self.state_dict[key] = np.random.uniform(Individual.minLimit, Individual.maxLimit, self.state_dict[key].shape)
 
 			#if self.x[i] > self.maxLimit: self.x[i]=self.maxLimit
 			#if self.x[i] < self.minLimit: self.x[i]=self.minLimit

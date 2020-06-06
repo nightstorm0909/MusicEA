@@ -6,12 +6,12 @@ import torch
 from utilities.RNN import RNN_numpy as RNN
 
 class rnnModel:
-	def __init__(self, input_size:int, hidden_size: int, output_size: int):
+	def __init__(self, input_size:int, hidden_size: int, output_size: int, n: int = 6):
 		self.input_size = input_size
 		self.hidden_size = hidden_size
 		self.output_size = output_size
 		
-		self.rnn = RNN(self.input_size, self.hidden_size, self.output_size)
+		self.rnn = RNN(self.input_size, self.hidden_size, self.output_size, n)
 
 	def generate(self, length: int, init: int = None, seq: list = None) -> np.ndarray:
 		'''

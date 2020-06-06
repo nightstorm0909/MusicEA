@@ -9,7 +9,7 @@ import numpy as np
 from random import Random
 import matplotlib.pyplot as plt
 from Individual import Individual
-from ALM import AutoRegressiveLM as alm
+from rnn import rnnModel
 from utilities.ev_config import EV_Config
 from utilities.music_utils import music_signal, music_save
 
@@ -70,26 +70,41 @@ def main(args=None):
 
 	best_individual = stats.bestIndividual[-1]
 
-	if not hasattr(best_individual.model, "rand"):
-		model = alm(N = len(best_individual.model.w),rand = True)
-		model.set_w(best_individual.model.w)
-		best_individual.model = model
-
 	# Generate whole music
-	gen = best_individual.model.generate(len(y))
+	print(best_individual.model.get_w()['i2h_weights'].shape, best_individual.model.get_w()['h2o_weights'].shape)
+	hidden_size = best_individual.model.get_w()['i2h_weights'].shape[1]
+	input_size = best_individual.model.get_w()['i2h_weights'].shape[0] - hidden_size
+	output_size = input_size
+
+	model = rnnModel(	input_size = input_size,
+							hidden_size = hidden_size,
+							output_size = output_size,
+							n = len(best_individual.model.get_w().keys()))
+	print(model.get_w().keys())
+	print(best_individual.model.get_w().keys())
+	model.set_w(best_individual.model.get_w())
+	gen = model.generate(len(y))
 	print(gen.shape)
 
 	# Complete the music
 	input_music_length = 10000
 	y_hat = y[:input_music_length]
 
-	history = y_hat[::-1][:len(best_individual.model.w)]
+	hidden = model.rnn.initHidden()
+	for i in range(input_music_length):
+		_, hidden = model.rnn.forward(y_hat[i].reshape(-1, 1), hidden)
+
 	complete = []
-	for _ in range(len(y) - input_music_length):
-		complete.append(best_individual.model.generate_with_history(history))
-		history = np.insert(history, 0, complete[-1])[:-1]
+	for i in range(len(y) - input_music_length):
+		if i > 0:
+			output, hidden = model.rnn.forward(output, hidden)
+		else:
+			output, hidden = model.rnn.forward(y_hat[-1].reshape(-1, 1), hidden)
+		complete.append(output)
 
 	complete = np.array(complete)
+	complete = complete.reshape(-1)
+	print(complete.shape, y_hat.shape)
 	y_hat = np.concatenate((y_hat, complete))
 	print(y_hat.shape)
 	
@@ -107,7 +122,7 @@ def main(args=None):
 	plt.title('Completed signal')
 	plt.show()
 	
-	music_save("{}2".format(new_filename), y_hat, sr2)
+	#music_save("{}2".format(new_filename), y_hat, sr2)
 	music_save(new_filename, gen, sr2)
 	return stats
 
