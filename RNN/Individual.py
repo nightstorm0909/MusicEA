@@ -57,6 +57,7 @@ class Individual:
 			for i in range(len(self.state_dict[key])):
 				if np.random.random() < 0.5:
 					child.state_dict[key][i] = other.state_dict[key][i]
+		child.fit = None
 		return child
 
 	def mutate(self):
