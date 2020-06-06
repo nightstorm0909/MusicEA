@@ -46,7 +46,8 @@ class rnnModel:
 		'''
 		Calculate the root mean square between generated sequence with history and given sequence
 		'''
-		generated_seq = self.generate(len(seq), np.random.normal(0, 1), seq)
+		#generated_seq = self.generate(len(seq), np.random.normal(0, 1), seq)
+		generated_seq = self.generate(len(seq), np.random.normal(0, 1))
 		rmse = np.sqrt(np.sum((seq - generated_seq)**2))
 		#print(rmse)
 		return -rmse

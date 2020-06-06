@@ -45,6 +45,8 @@ class RNN_numpy:
 		self.state = {}
 		self.state['i2h_weights'] = np.random.uniform(-1, 1, (self.input_size + self.hidden_size, self.hidden_size))
 		self.state['i2h_bias'] = np.random.uniform(-1, 1, self.hidden_size)
+		self.state['h2h_weights'] = np.random.uniform(-1, 1, (self.hidden_size, self.hidden_size))
+		self.state['h2h_bias'] = np.random.uniform(-1, 1, self.hidden_size)
 		self.state['h2o_weights'] = np.random.uniform(-1, 1, (self.hidden_size, self.output_size))
 		self.state['h2o_bias'] = np.random.uniform(-1, 1, self.output_size)
 
@@ -58,6 +60,9 @@ class RNN_numpy:
 		combined = np.concatenate((x, hidden), axis = 1)
 
 		hidden = np.matmul(combined, self.state['i2h_weights']) + self.state['i2h_bias']
+		hidden = self.sigmoid(hidden)
+
+		hidden = np.matmul(hidden, self.state['h2h_weights']) + self.state['h2h_bias']
 		hidden = self.sigmoid(hidden)
 
 		output = np.matmul(hidden, self.state['h2o_weights']) + self.state['h2o_bias']
