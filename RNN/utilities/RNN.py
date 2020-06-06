@@ -41,12 +41,13 @@ class RNN_numpy:
 		self.hidden_size = hidden_size
 		self.input_size = input_size
 		self.output_size = output_size
+		self.n = n
 
 		self.state = {}
 		self.state['i2h_weights'] = np.random.uniform(-1, 1, (self.input_size + self.hidden_size, self.hidden_size))
 		self.state['i2h_bias'] = np.random.uniform(-1, 1, self.hidden_size)
 
-		if n == 6:
+		if self.n == 6:
 			self.state['h2h_weights'] = np.random.uniform(-1, 1, (self.hidden_size, self.hidden_size))
 			self.state['h2h_bias'] = np.random.uniform(-1, 1, self.hidden_size)
 
@@ -68,8 +69,9 @@ class RNN_numpy:
 		hidden = np.matmul(combined, self.state['i2h_weights']) + self.state['i2h_bias']
 		hidden = self.sigmoid(hidden)
 
-		hidden = np.matmul(hidden, self.state['h2h_weights']) + self.state['h2h_bias']
-		hidden = self.sigmoid(hidden)
+		if self.n == 6:
+			hidden = np.matmul(hidden, self.state['h2h_weights']) + self.state['h2h_bias']
+			hidden = self.sigmoid(hidden)
 
 		output = np.matmul(hidden, self.state['h2o_weights']) + self.state['h2o_bias']
 		output = np.tanh(output)
