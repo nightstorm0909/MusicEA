@@ -71,11 +71,14 @@ class Individual:
 			if self.sigma[key] < self.minSigma: self.sigma[key] = self.minSigma
 			if self.sigma[key] > self.maxSigma: self.sigma[key] = self.maxSigma
 
-			for i, value in enumerate(self.state_dict[key]):
-				if np.random.random() < self.sigma[key]:
+			#for i, value in enumerate(self.state_dict[key]):
+				#if np.random.random() < self.sigma[key]:
 					#self.state_dict[key][i] = torch.randn(self.state_dict[key][i].shape)
-					self.state_dict[key][i] = np.random.uniform(-1, 1, self.state_dict[key][i].shape)
+					#self.state_dict[key][i] = np.random.uniform(-1, 1, self.state_dict[key][i].shape)
 		
+			if np.random.random() < self.sigma[key]:
+					self.state_dict[key] = np.random.uniform(-1, 1, self.state_dict[key].shape)
+
 			#if self.x[i] > self.maxLimit: self.x[i]=self.maxLimit
 			#if self.x[i] < self.minLimit: self.x[i]=self.minLimit
 		#print("After")
