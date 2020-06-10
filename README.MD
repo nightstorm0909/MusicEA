@@ -24,7 +24,7 @@ For population training, run:
 ```sh
 cd ALM && python main.py -c config.cfg -m data/train.npy
 ```
-For new music file generation, run:
+For new music file generation using pretrained model, run:
 ```sh
 python generate_wav.py -c config -b output/stat_gen2000_pop50_n50_False.pickle -m data/train.npy -s new_song
 ```
@@ -42,3 +42,26 @@ Config file
 * multiSigma - whether to use mutiple sigmas for mutation
 * generateFitness - fitness calculation by generating signal without any training input
 * windowSize - window size (optional)
+
+# Evolutionary Recurrent Neural Network (RNN)
+For population training, run:
+```sh
+cd RNN && python main.py -c config.cfg -m data/train.npy
+```
+For new music file generation using pretrained model, run:
+```sh
+python generate_wav.py -c config.cfg -s new_song -m data/train.npy -b output/stat_gen10000_pop50_in1_h30_o1_reduce5.pickle
+```
+Config file
+* populationSize - size of the population
+* generationCount - number of generations
+* crossoverFraction - which fraction of population to combine
+* randomSeed - random seed
+* learningRate: 1.0
+* minLimit - minimum value of parameters of RNN
+* maxLimit - maximum value of parameters of RNN
+* samplingRate - new sampling rate for the music
+* reduceLength - reducing the numpy array by 1/(reduceLength) fraction
+* inputSize - size of the input to the RNN
+* hiddenSize - size of the hidden state of the RNN
+* outputSize - size of the output from the RNN

@@ -122,12 +122,23 @@ def main(args=None):
 	plt.title('Completed signal')
 	plt.show()
 	
+	# plot original and generated music
+	plt.figure()
+	plt.subplots_adjust(wspace = 0.5)
+	plt.subplot(121)
+	plt.hist(y, 100)
+	plt.title('Music Histogram')
+	plt.subplot(122)
+	plt.hist(gen, 100)
+	plt.title('RNN Generation Histogram')
+	plt.show()
+	
 	#music_save("{}2".format(new_filename), y_hat, sr2)
 	music_save(new_filename, gen, sr2)
-	return stats
+	return stats, y, gen, y_hat
 
 if __name__ == '__main__':
-	stats = main()
+	stats, y, gen, y_hat = main()
 	# main(['-m', 'data/Never-Gonna-Give-You-Up-1.mid',
 	#	   '-b','output/stat_gen10_hid32_state7469.pickle',
 	#	   '-s', 'new_song_2'])
