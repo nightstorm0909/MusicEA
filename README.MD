@@ -26,7 +26,7 @@ cd ALM && python main.py -c config.cfg -m data/train.npy
 ```
 For new music file generation using pretrained model, run:
 ```sh
-python generate_wav.py -c config -b output/stat_gen2000_pop50_n50_False.pickle -m data/train.npy -s new_song
+python generate_wav.py -c config.cfg -b output/stat_gen2000_pop50_n50_False.pickle -m data/train.npy -s new_song
 ```
 Config file
 * populationSize - size of the population 
