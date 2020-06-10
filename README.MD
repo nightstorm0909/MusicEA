@@ -1,11 +1,11 @@
 # Evolutionary Hidden Markov models (HMM)
 For population training, run:
 ```sh
-python main.py -c config.cfg -m song.mid
+cd HMM && python -i main.py -c config.cfg -m data/Never-Gonna-Give-You-Up-1.mid
 ```
 For new midi file generation, run:
 ```sh
-python generate_midi.py -b model.pickle -m song.mid -s new_song
+python generate_midi.py -m data/Never-Gonna-Give-You-Up-1.mid -s new_song -b output/stat_gen1000_hid50_state41.pickle
 ```
 Config file
 * populationSize - size of population
