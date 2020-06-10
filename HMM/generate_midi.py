@@ -60,7 +60,7 @@ def main(args=None):
         stats = pickle.load(f)
 
     # plot statistics
-    # stats.plot()
+    stats.plot()
 
     best_individual = stats.bestIndividual
 
