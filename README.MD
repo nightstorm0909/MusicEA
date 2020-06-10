@@ -19,12 +19,6 @@ Config file
 
 [Mark Stamp. HMM](https://www.cs.sjsu.edu/~stamp/RUA/HMM.pdf)
 
-# Music generation using Autoregressive Linear Model(ALM)
-For population training, run:
-```sh
-python main.py -c config.cfg -m train.mp3
-```
-
 # Evolutionary AutoRegressive Linear Model (ALM)
 For population training, run:
 ```sh
