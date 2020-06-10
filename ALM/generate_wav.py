@@ -96,23 +96,23 @@ def main(args=None):
 	# plot original and generated music
 	plt.figure()
 	plt.subplots_adjust(hspace = 0.5)
-	plt.subplot(311)
+	plt.subplot(211)
 	plt.plot(y)
 	plt.title('Original signal')
-	plt.subplot(312)
+	plt.subplot(212)
 	plt.plot(gen)
 	plt.title('Generated Signal')
-	plt.subplot(313)
-	plt.plot(y_hat)
-	plt.title('Completed signal')
+	#plt.subplot(313)
+	#plt.plot(y_hat)
+	#plt.title('Completed signal')
 	plt.show()
 	
-	music_save("{}2".format(new_filename), y_hat, sr2)
+	#music_save("{}2".format(new_filename), y_hat, sr2)
 	music_save(new_filename, gen, sr2)
-	return stats
+	return stats, y_hat, gen, y
 
 if __name__ == '__main__':
-	stats = main()
+	stats, y_hat, gen, y = main()
 	# main(['-m', 'data/Never-Gonna-Give-You-Up-1.mid',
 	#	   '-b','output/stat_gen10_hid32_state7469.pickle',
 	#	   '-s', 'new_song_2'])
